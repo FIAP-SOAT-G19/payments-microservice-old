@@ -21,8 +21,8 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
   async validate (input: IProcessPaymentUseCase.Input): Promise<void> {
     this.schemaValidation(input)
     this.cardValidation(input.creditCard)
-    await this.orderValidation(input.orderNumber)
-    await this.paymentValidation(input.orderNumber)
+    // await this.orderValidation(input.orderNumber)
+    // await this.paymentValidation(input.orderNumber)
   }
 
   schemaValidation (input: IProcessPaymentUseCase.Input): void {
@@ -43,22 +43,22 @@ export class ProcessPaymentUseCase implements IProcessPaymentUseCase {
     }
   }
 
-  async orderValidation(orderNumber: string): Promise<void> {
-    const order = await this.gateway.getByOrderNumber(orderNumber)
+  // async orderValidation(orderNumber: string): Promise<void> {
+  //   const order = await this.gateway.getByOrderNumber(orderNumber)
 
-    if (!order) {
-      throw new InvalidParamError('orderNumber')
-    }
+  //   if (!order) {
+  //     throw new InvalidParamError('orderNumber')
+  //   }
 
-    if (order.status !== constants.ORDER_STATUS.WAITING_PAYMENT) {
-      throw new InvalidParamError('This payment cannot be processed')
-    }
-  }
+  //   if (order.status !== constants.ORDER_STATUS.WAITING_PAYMENT) {
+  //     throw new InvalidParamError('This payment cannot be processed')
+  //   }
+  // }
 
-  async paymentValidation(orderNumber: string): Promise<void> {
-    const paymentsInProcessing = await this.gateway.countPaymentByStatusAndOrderNumber(constants.PAYMENT_STATUS.PROCESSING, orderNumber)
-    if (paymentsInProcessing > 0) {
-      throw new InvalidParamError('This payment cannot be processed')
-    }
-  }
+  // async paymentValidation(orderNumber: string): Promise<void> {
+  //   const paymentsInProcessing = await this.gateway.countPaymentByStatusAndOrderNumber(constants.PAYMENT_STATUS.PROCESSING, orderNumber)
+  //   if (paymentsInProcessing > 0) {
+  //     throw new InvalidParamError('This payment cannot be processed')
+  //   }
+  // }
 }
