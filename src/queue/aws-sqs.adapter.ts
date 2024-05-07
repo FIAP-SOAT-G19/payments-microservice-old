@@ -1,6 +1,6 @@
 import { SendMessageRequest, ReceiveMessageCommand, SendMessageCommand, SQSClient } from '@aws-sdk/client-sqs'
 import { QueueInterface } from './queue.interface'
-import constants from '@/shared/constants'
+import constants from '../shared/constants'
 
 export class AwsSqsAdapter implements QueueInterface {
   private readonly client: SQSClient
@@ -39,6 +39,7 @@ export class AwsSqsAdapter implements QueueInterface {
 
   private getClient(): SQSClient {
     return new SQSClient({
+      endpoint: process.env.LOCALSTACK_URL,
       region: process.env.AWS_REGION,
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY!,

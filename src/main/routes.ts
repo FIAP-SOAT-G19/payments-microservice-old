@@ -13,7 +13,7 @@ const paymentRepository = new PaymentRepository(prismaClient)
 const paymentUseCase = new PaymentUseCase(paymentRepository, sqsAdapter)
 const paymentController = new PaymentController(paymentUseCase)
 
-router.post('/payments', async (req, res) => {
+router.get('/process', async (req, res) => {
   await paymentController.handleSQSMessage(req, res)
 })
 

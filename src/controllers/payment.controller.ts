@@ -10,12 +10,12 @@ class PaymentController {
 
   public async handleSQSMessage(req: Request, res: Response): Promise<void> {
     try {
-      const { orderNumber, cardId } = req.body
-      if (!orderNumber || !cardId) {
-        res.status(400).send('Parâmetros inválidos.')
-        return
-      }
-      await this.paymentUseCase.processSQSMessage(orderNumber as string, cardId as string)
+      // const { orderNumber, cardId } = req.body
+      // if (!orderNumber || !cardId) {
+      //   res.status(400).send('Parâmetros inválidos.')
+      //   return
+      // }
+      await this.paymentUseCase.consumeSQSMessages()
       res.status(200).send('Mensagem processada com sucesso.')
     } catch (error) {
       console.error('Erro ao processar mensagem SQS:', error)
