@@ -13,7 +13,7 @@ datasource db {
 model Payment {
   id          String    @id
   orderNumber String    @unique()
-  status      Boolean // true: success, false: failed
+  status      Boolean
   reason      String?
   createdAt   DateTime
   updatedAt   DateTime? @updatedAt
