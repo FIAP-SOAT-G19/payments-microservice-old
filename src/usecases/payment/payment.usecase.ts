@@ -12,27 +12,25 @@ class PaymentUseCase {
   }
 
   public async consumeSQSMessages(): Promise<void> {
-    const queueUrl = 'http://localhost:4566/000000000000/created_payment'
+    const queueUrl = 'http://172.17.0.2:4566/000000000000/created_payment'
 
-    while (true) {
-      // Recebe uma mensagem da fila SQS
-      const message = await this.sqsAdapter.receiveMessage(queueUrl)
-      console.log('Mensagem recebida:', message)
+    // Recebe uma mensagem da fila SQS
+    const message = await this.sqsAdapter.receiveMessage(queueUrl)
+    console.log('Mensagem recebida:', message)
 
-      // Se não houver mensagem, interrompe o loop
-      if (!message) {
-        break
-      }
-
-      // Extrai o número do pedido e o ID do cartão da mensagem
-      const { orderNumber, cardId } = JSON.parse(message.Body as string)
-
-      // Processa a mensagem
-      await this.processSQSMessage(orderNumber as string, cardId as string)
-
-      // Remove a mensagem da fila para evitar o reprocessamento
-      // await this.sqsAdapter.deleteMessage(queueUrl, message.ReceiptHandle)
+    // Se não houver mensagem, interrompe o loop
+    if (!message) {
+      return
     }
+
+    // Extrai o número do pedido e o ID do cartão da mensagem
+    const { orderNumber, cardId } = JSON.parse(message.Body as string)
+
+    // Processa a mensagem
+    await this.processSQSMessage(orderNumber as string, cardId as string)
+
+    // Remove a mensagem da fila para evitar o reprocessamento
+    // await this.sqsAdapter.deleteMessage(queueUrl, message.ReceiptHandle)
   }
 
   public async processSQSMessage(orderNumber: string, cardId: string): Promise<void> {
@@ -81,7 +79,7 @@ class PaymentUseCase {
       await this.paymentRepository.createPayment(paymentInput)
 
       // Publica o resultado na fila SQS
-      const resultQueueUrl = 'http://localhost:4566/000000000000/appoved_payment' // Defina a URL da fila de resultados correta
+      const resultQueueUrl = 'http://172.17.0.2:4566/000000000000/appoved_payment' // Defina a URL da fila de resultados correta
       await this.sqsAdapter.publishPaymentResult(resultQueueUrl, orderNumber, paymentResult.accept)
     } catch (error) {
       console.error('Erro ao persistir e publicar o resultado do pagamento:', error)

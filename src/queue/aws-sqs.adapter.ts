@@ -24,12 +24,15 @@ export class AwsSqsAdapter implements QueueInterface {
   }
 
   async receiveMessage(queueUrl: string): Promise<any> {
+    console.log('Recebendo mensagem da fila SQS...')
+    console.log('Fila:', queueUrl)
     const command = new ReceiveMessageCommand({
       QueueUrl: queueUrl,
       MaxNumberOfMessages: 10
     })
-
-    return this.client.send(command)
+    const result = this.client.send(command)
+    console.log('Comando:', result)
+    return result
   }
 
   async publishPaymentResult(queueName: string, orderNumber: string, paymentResult: boolean): Promise<boolean> {
@@ -39,11 +42,11 @@ export class AwsSqsAdapter implements QueueInterface {
 
   private getClient(): SQSClient {
     return new SQSClient({
-      endpoint: process.env.LOCALSTACK_URL,
-      region: process.env.AWS_REGION,
+      endpoint: 'http://172.17.0.2:4566',
+      region: 'us-east-1',
       credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY!,
-        secretAccessKey: process.env.AWS_SECRET_KEY!
+        accessKeyId: 'test',
+        secretAccessKey: 'test'
       }
     })
   }
